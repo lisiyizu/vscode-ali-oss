@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-
+const byteSize = require('byte-size');
 
 export interface Progress {
     progress: vscode.Progress<{ message?: string; increment?: number }>
@@ -32,7 +32,6 @@ export function getProgress(title = 'Uploading object'): Progress {
     };
 }
 
-
 export function readFileList(dir: string, filesList: string[]) {
     const files = fs.readdirSync(dir);
     files.forEach((item: any) => {
@@ -45,6 +44,10 @@ export function readFileList(dir: string, filesList: string[]) {
         }
     });
     return filesList;
+}
+
+export function getSizeString(size: Number) {
+    return byteSize(size, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } }).toString();
 }
 
 export function isSupportTinyPng(file: string, size: number) {

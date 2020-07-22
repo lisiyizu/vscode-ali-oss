@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import { AliOssConfiguration } from '../common/AliOssConfiguration';
-const OSS = require('ali-oss');
 import axios from 'axios';
+import { getSizeString } from '../common/Utils';
+const OSS = require('ali-oss');
+const byteSize = require('byte-size');
 
 export class AliOss {
     private static uploadedOssList: any[] = [];
@@ -36,7 +38,7 @@ export class AliOss {
     }
 
     // 获取图片信息
-    public static async getOssImageInfo(ossUrl: string, fileType: String): Promise<any> {
+    public static async getOssInfo(ossUrl: string, fileType: String): Promise<any> {
         return axios.get(`${ossUrl}?x-oss-process=${fileType}`);
     }
 
@@ -59,7 +61,7 @@ export class AliOss {
             if (res.objects) {
                 res.objects.forEach((item: any, index: number) => {
                     if (item.name !== dir) {
-                        mapOssFile[item.name.replace(dir, '')] = '';
+                        mapOssFile[item.name.replace(dir, '')] = `${getSizeString(item.size)}`;
                     }
                 });
             }

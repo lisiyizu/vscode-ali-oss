@@ -3,7 +3,7 @@
 	"displayName": "vscode-ali-oss",
 	"icon": "media/vscode-ali-oss.png",
 	"description": "阿里云OSS高效工具",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "kummy",
 	"engines": {
 		"vscode": "^1.39.0"
@@ -150,12 +150,12 @@
 				},
 				{
 					"command": "alioss.copyOssFile",
-					"when": "viewItem == file",
+					"when": "viewItem == file || viewItem == tinypng",
 					"group": "inline"
 				},
 				{
 					"command": "alioss.openOssFileLink",
-					"when": "viewItem == file",
+					"when": "viewItem == file || viewItem == tinypng",
 					"group": "inline"
 				}
 			],

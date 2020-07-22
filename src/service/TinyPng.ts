@@ -7,11 +7,10 @@
  * 
  *  */
 import { AliOss } from './AliOss';
-import { isSupportTinyPng } from '../common/Utils';
+import { isSupportTinyPng, getSizeString } from '../common/Utils';
 const fs = require('fs');
 const https = require('https');
 const { URL } = require('url');
-const byteSize = require('byte-size');
 const max = 5200000; // 5MB == 5242848.754299136
 
 const options: any = {
@@ -51,7 +50,7 @@ export class TinyPng {
         let req = https.request(options, function (res: any) {
             res.on('data', (buf: any) => {
                 let obj = JSON.parse(buf.toString());
-                let outputFileSize = byteSize(obj.output.size, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } }).toString();
+                let outputFileSize = getSizeString(obj.output.size);
                 // 读取TinyPng图片压缩数据
                 let options = new URL(obj.output.url);
                 let reqTinyPng = https.request(options, (res: any) => {
@@ -110,7 +109,7 @@ function tpFileUpload(ossPath: string, file: string, cb: Function) {
 // 该方法被循环调用,请求图片数据
 function fileUpdate(ossPath: string, imgPath: string, obj: any, cb: Function) {
     let options = new URL(obj.output.url);
-    let outputSize = byteSize(obj.output.size, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } }).toString();
+    let outputSize = getSizeString(obj.output.size);
     let req = https.request(options, (res: any) => {
         let data = '';
         res.setEncoding('binary');

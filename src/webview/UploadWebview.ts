@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { BaseWebView } from './BaseWebView';
 import { WebCommand } from '../common/WebCommand';
+import { getSizeString } from '../common/Utils';
 import { TinyPng } from '../service/TinyPng';
 import * as fs from 'fs';
-const byteSize = require('byte-size');
 
 export class UploadWebview extends BaseWebView {
 
@@ -16,7 +16,7 @@ export class UploadWebview extends BaseWebView {
                 let sizeArr: Number[] = [];
                 data.upFiles.forEach((item: string) => {
                     const stat = fs.statSync(data.localPath + (data.localPath.indexOf(item) > -1 ? "" : item));
-                    const size = byteSize(stat.size, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } });
+                    const size = getSizeString(stat.size);
                     fileSizes.push(size.toString());
                     sizeArr.push(stat.size);
                 });

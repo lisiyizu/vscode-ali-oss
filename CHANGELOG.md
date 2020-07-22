@@ -1,6 +1,10 @@
-# vscode-ali-oss-阿里云OSS高效工具
+# vscode-ali-oss「阿里云OSS高效工具」
 
 ## 版本发布
+
+### 1.0.2
+
+1: oss 文件大小的信息
 
 ### 1.0.0
 

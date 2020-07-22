@@ -4,11 +4,9 @@ import { UploadWebview } from './webview/UploadWebview';
 import { SettingWebview } from './webview/SettingWebview';
 import { BaseWebView } from './webview/BaseWebView';
 import { AliOssConfiguration } from './common/AliOssConfiguration';
-import { getProgress, isSupportTinyPng, readFileList } from './common/Utils';
+import { getProgress, isSupportTinyPng, readFileList, getSizeString } from './common/Utils';
 import * as fs from 'fs';
-import * as path from 'path';
 import { TinyPng } from './service/TinyPng';
-const byteSize = require('byte-size');
 type State = 'uninitialized' | 'initialized';
 
 let dirList: string[] = [];
@@ -53,7 +51,7 @@ export class AliOssTreeView {
 			const ext = item.substr(item.lastIndexOf('.')).toLowerCase();
 			const configuration = AliOssConfiguration.geConfig();
 			if (/\.(png|jpg|jpeg|webp|gif|bmp|tiff|ico)$/.test(ext)) {
-				const imageInfo = await AliOss.getOssImageInfo(`https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${encodeURI(item)}`, 'image/info');
+				const imageInfo = await AliOss.getOssInfo(`https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${encodeURI(item)}`, 'image/info');
 				if (!panelImageWebview) {
 					panelImageWebview = vscode.window.createWebviewPanel(
 						'imagePreview',
@@ -84,13 +82,13 @@ export class AliOssTreeView {
 					</style>
 					<body>
 						<div class='main'>
-							<div class="info">图片大小：${byteSize(imageInfo.data.FileSize.value, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } }).toString()}，宽高：${imageInfo.data.ImageWidth.value} x ${imageInfo.data.ImageHeight.value}</div>
+							<div class="info">图片大小：${getSizeString(imageInfo.data.FileSize.value)}，宽高：${imageInfo.data.ImageWidth.value} x ${imageInfo.data.ImageHeight.value}</div>
 							<div class=""><img src="https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${item}"></div>
 						</div>
 					</body>
 				</html>`;
 			} else if (/\.(svg)$/.test(ext)) {
-				const svgInfo = await AliOss.getOssImageInfo(`https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${encodeURI(item)}`, 'file/info');
+				const svgInfo = await AliOss.getOssInfo(`https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${encodeURI(item)}`, 'file/info');
 				if (!panelImageWebview) {
 					panelImageWebview = vscode.window.createWebviewPanel(
 						'imagePreview',
@@ -112,14 +110,14 @@ export class AliOssTreeView {
 			const pro = getProgress(`正在处理中，请稍等～`);
 			const ret = await AliOss.getBuffer(item.dir);
 			if (isSupportTinyPng(item.dir, ret.res.size)) {
-				let oriFileSize = byteSize(ret.res.size, { toStringFn() { return `${Math.round(this.value)} ${this.unit}`; } }).toString();
+				let oriFileSize = getSizeString(ret.res.size);
 				TinyPng.uploadOssFile(item.dir, ret.content, (res: any) => {
 					emitter.fire(null);
 					pro.progressResolve(100);
 					if (res.code === 1) {
-						vscode.window.showInformationMessage(`上传成功：压缩前-${oriFileSize}，压缩后-${res.outputFileSize}`);
+						vscode.window.showInformationMessage(`上传成功：压缩前 - ${oriFileSize} ，压缩后 - ${res.outputFileSize} `);
 					} else {
-						vscode.window.showErrorMessage(`上传报错：${res.data}`);
+						vscode.window.showErrorMessage(`上传报错：${res.data} `);
 					}
 				});
 			} else {
@@ -147,13 +145,13 @@ export class AliOssTreeView {
 		vscode.commands.registerCommand("alioss.renameFile", async (item: any) => {
 			const inputName: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
-				prompt: `重命名：${item.key}`,
+				prompt: `重命名：${item.key} `,
 				placeHolder: "请输入",
 				value: item.key
 			});
 			const topDirs = item.dir.replace(item.key, '');
 			if (inputName) {
-				AliOss.renameFile(`${topDirs}${inputName}`, item.dir);
+				AliOss.renameFile(`${topDirs} ${inputName} `, item.dir);
 				vscode.window.showInformationMessage('修改成功!');
 				emitter.fire(null);
 			}
@@ -287,11 +285,12 @@ function treeNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string
 			let data: any = await getChildren(element?.dir || '');
 			Object.keys(data).map((k: string) => {
 				if (element && element.key) {
-					setTreeNodeByEval(element.dir, element.key, k);
+					setTreeNodeByEval(element.dir, element.key, k, data);
 				} else {
-					data[k] = k.indexOf('/') > -1 ? {} : '';
+					data[k] = k.indexOf('/') > -1 ? {} : data[k];
 				}
 			});
+			console.log(tree);
 			data = Object.keys(data).map((k: string) => getNode(k, `${element?.dir || ''}${k}`));
 			const dataFolders = data.filter((item: any) => item.key.indexOf('/') > -1).sort((a: any, b: any) => a.key.charCodeAt(0) - b.key.charCodeAt(0));
 			const dataFiles = data.filter((item: any) => item.key.indexOf('/') === -1).sort((a: any, b: any) => a.key.charCodeAt(0) - b.key.charCodeAt(0));
@@ -303,14 +302,23 @@ function treeNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string
 	};
 }
 
-function setTreeNodeByEval(dir: string, key: string, val: string) {
+function setTreeNodeByEval(dir: string, key: string, val: string, map: any) {
 	let evalStr = 'tree';
 	let dirs = dir.split('/').filter(Boolean) || [];
 	dirs.forEach((key: string) => {
 		evalStr += `['${key}/']`;
 	});
-	evalStr += `['${val}']={}`;
+	evalStr += `['${val}']=${val.indexOf('/') > -1 ? '{}' : `'${map[val]}'`}`;
 	eval(evalStr);
+}
+
+function getTreeNode(dir: string, key: string) {
+	let evalStr = 'tree';
+	let dirs = dir.split('/').filter(Boolean) || [];
+	dirs.forEach((val: string) => {
+		evalStr += `['${val}${val === key ? '' : '/'}']`;
+	});
+	return eval(evalStr);
 }
 
 async function getChildren(dir: string | undefined): Promise<any[]> {
@@ -346,8 +354,8 @@ function getTreeItem(element: any): vscode.TreeItem {
 			title: '',
 			arguments: [dir]
 		},
-		label: <any>{ label: `${folder ? `${key.replace("/", "")}` : `${key}`}` },
-		// tooltip: `Tooltip for ${key}`,
+		label: <any>{ label: `${folder ? `${key.replace("/", "")}` : `[${getTreeNode(dir, key)}]   ${key}`}` },
+		// tooltip: `文件大小：${getTreeNode(dir, key)}`,
 		iconPath: "",
 		contextValue: folder ? 'folder' : /\.(png|jpg)$/.test(key) ? 'tinypng' : 'file',
 		collapsibleState: treeElement && Object.keys(treeElement).length || (folder === createDirFull) ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
