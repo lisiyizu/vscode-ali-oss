@@ -1,0 +1,238 @@
+{
+	"name": "vscode-ali-oss",
+	"displayName": "vscode-ali-oss",
+	"icon": "media/vscode-ali-oss.png",
+	"description": "阿里云OSS高效工具",
+	"version": "1.0.0",
+	"publisher": "kummy",
+	"engines": {
+		"vscode": "^1.39.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"enableProposedApi": true,
+	"contributes": {
+		"commands": [
+			{
+				"command": "alioss.configuration",
+				"title": "vscode-ali-oss:配置",
+				"icon": {
+					"light": "res/media/light/setting.svg",
+					"dark": "res/media/dark/setting.svg"
+				}
+			},
+			{
+				"command": "alioss.refreshOss",
+				"title": "刷新",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "alioss.createOssDir",
+				"title": "新建",
+				"icon": {
+					"light": "res/media/light/folder.svg",
+					"dark": "res/media/dark/folder.svg"
+				}
+			},
+			{
+				"command": "alioss.promptFile",
+				"title": "上传",
+				"icon": {
+					"light": "res/media/light/upload.svg",
+					"dark": "res/media/dark/upload.svg"
+				}
+			},
+			{
+				"command": "alioss.deleteFile",
+				"title": "删除"
+			},
+			{
+				"command": "alioss.renameFile",
+				"title": "重命名"
+			},
+			{
+				"command": "alioss.toTinyPng",
+				"title": "TinyPng压缩处理"
+			},
+			{
+				"command": "alioss.copyOssFile",
+				"title": "复制",
+				"icon": {
+					"light": "res/media/light/copy.svg",
+					"dark": "res/media/dark/copy.svg"
+				}
+			},
+			{
+				"command": "alioss.openOssFileLink",
+				"title": "链接",
+				"icon": {
+					"light": "res/media/light/file.svg",
+					"dark": "res/media/dark/file.svg"
+				}
+			},
+			{
+				"command": "alioss.copyOssFolder",
+				"title": "复制",
+				"icon": {
+					"light": "res/media/light/copy.svg",
+					"dark": "res/media/dark/copy.svg"
+				}
+			},
+			{
+				"command": "alioss.toUploadWebview",
+				"title": "vscode-ali-oss:上传"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "aliOssExplorer",
+					"title": "vscode",
+					"icon": "media/vscode-ali-oss.svg"
+				}
+			]
+		},
+		"views": {
+			"aliOssExplorer": [
+				{
+					"id": "aliOssTreeView",
+					"name": "ali-oss"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "aliOssTreeView",
+				"contents": "Failed to connect OSS. \n[进入配置](command:alioss.configuration)",
+				"when": "ali-oss-configuration.state == uninitialized"
+			}
+		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "alioss.refreshOss",
+					"when": "viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.createOssDir",
+					"when": "viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.promptFile",
+					"when": "viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.deleteFile"
+				},
+				{
+					"command": "alioss.renameFile",
+					"when": "viewItem == file || viewItem == tinypng"
+				},
+				{
+					"command": "alioss.toTinyPng",
+					"when": "viewItem == tinypng"
+				},
+				{
+					"command": "alioss.copyOssFolder",
+					"when": "viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.copyOssFile",
+					"when": "viewItem == file",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.openOssFileLink",
+					"when": "viewItem == file",
+					"group": "inline"
+				}
+			],
+			"view/title": [
+				{
+					"command": "alioss.refreshOss",
+					"when": "view == aliOssTreeView && ali-oss-configuration.state == initialized",
+					"group": "navigation"
+				},
+				{
+					"command": "alioss.createOssDir",
+					"when": "view == aliOssTreeView && ali-oss-configuration.state == initialized",
+					"group": "navigation"
+				},
+				{
+					"command": "alioss.configuration",
+					"when": "view == aliOssTreeView && ali-oss-configuration.state == initialized",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "alioss.toUploadWebview",
+					"group": "navigation"
+				}
+			]
+		},
+		"configuration": {
+			"title": "vscode-ali-oss",
+			"properties": {
+				"vscode-ali-oss.region": {
+					"type": "string",
+					"markdownDescription": "",
+					"default": ""
+				},
+				"vscode-ali-oss.accessKeyId": {
+					"type": "string",
+					"default": ""
+				},
+				"vscode-ali-oss.accessKeySecret": {
+					"type": "string",
+					"default": ""
+				},
+				"vscode-ali-oss.bucket": {
+					"type": "string",
+					"default": ""
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/co": "^4.6.2",
+		"@types/ali-oss": "^6.0.5",
+		"@types/vscode": "^1.39.0",
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.26.0",
+		"@typescript-eslint/eslint-plugin": "^2.26.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.1",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"ali-oss": "^6.9.0",
+		"axios": "^0.19.2",
+		"byte-size": "^7.0.0",
+		"co": "^4.6.0"
+	}
+}

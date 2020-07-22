@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="./resources/element.css">
+  <link rel="stylesheet" href="./resources/style.css">
+</head>
+
+<body>
+  <div id="app" v-loading="loading" :element-loading-text="loadingText" element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(255, 255, 255, 0.4)">
+    <el-alert title="上传" type="success" effect="dark" :closable="false">
+      <p>官方OSS配置项： <a
+          href="https://help.aliyun.com/document_detail/64097.html">https://help.aliyun.com/document_detail/64097.html</a>
+      </p>
+    </el-alert>
+    <el-alert type="warning" effect="dark" :closable="false">
+      <div>
+        <el-input style="width:560px" placeholder="请输入OSS上传目录" size="medium" v-model="ossPath">
+          <template slot="prepend">OSS上传目录</template>
+          <el-button slot="append" icon="el-icon-warning" color="#FF6A00" @click="dialogVisible=true"></el-button>
+        </el-input>
+        <el-dialog title='' :visible.sync='dialogVisible' top="35vh" width='420px'>
+          <p>目录命名规范：</p>
+          <p>1.不允许使用表情符，请使用符合要求的 UTF-8 字符；</p>
+          <p>2./ 用于分割路径，可快速创建子目录，但不要以 / 或 \ 开头，不要出现连续的 /；</p>
+          <p>3.不允许出现名为 .. 的子目录；</p>
+          <p>4.总长度控制在 1~254 个字符。</p>
+        </el-dialog>
+        <el-button type="primary" size="medium" @click="startUpload" style="margin-left:20px;"
+          :disabled="checkList.length===0">开始上传</el-button>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <p style="color:#777777">本地上传目录：{{data.localPath}}</p>
+        </div>
+        <div>
+          <el-radio-group v-model="uploadWay" size="medium" @change="changeRadioGroup">
+            <el-radio-button :label="0">OSS普通上传</el-radio-button>
+            <el-radio-button :label="1">TinyPng压缩上传</el-radio-button>
+          </el-radio-group>
+        </div>
+      </div>
+      <div style="height: calc(100vh - 200px); overflow: scroll;">
+        <el-table :data="tableList" ref="tableRef" style="width: 100%;" border
+          @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="60" align="center"></el-table-column>
+          <el-table-column type="index" width="80px" label="序号" align="center"></el-table-column>
+          <el-table-column width="100px" label="原始尺寸" align="center">
+            <template slot-scope="scope">{{data.fileSizes[scope.$index]}}</template>
+          </el-table-column>
+          <el-table-column show-overflow-tooltip label="本地上传文件">
+            <template slot-scope="scope">{{scope.row.file.substr(1)}}</template>
+          </el-table-column>
+          <el-table-column v-if='uploadWay===1' width="120px" align="center" label="是否支持压缩"
+            :render-header="renderHeader">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.isTinyPng" size="mini" effect="dark" type="success">支持</el-tag>
+              <el-tag v-else size="mini" effect="dark" type="danger">不支持</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column v-if='uploadWay===1' width="80px" label="压缩尺寸" align="center">
+            <template slot-scope="scope">{{scope.row.outputSize}}</template>
+          </el-table-column>
+          <el-table-column show-overflow-tooltip width="160px" label="上传状态" align="center">
+            <template slot-scope="scope">
+              <span v-if="scope.row.uploadStatus === 1">
+                <el-link :underline="false" type="success">{{scope.row.uploadMsg}}</el-link>
+              </span>
+              <span v-else-if="scope.row.uploadStatus === 0">
+                <el-link :underline="false" type="danger">{{scope.row.uploadMsg}}</el-link>
+              </span>
+              <span v-else>{{scope.row.uploadMsg}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-alert>
+  </div>
+</body>
+<script src="./config/command.js"></script>
+<script src="./resources/vue.min.js"></script>
+<script src="./resources/element.min.js"></script>
+<script src="./webview-upload.js"></script>
+
+</html>

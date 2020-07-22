@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./resources/element.css">
+    <link rel="stylesheet" href="./resources/style.css">
+</head>
+
+<body>
+    <div id="app" v-loading="loading">
+        <el-alert title="设置" type="success" effect="dark" :closable="false">
+            <p>官方OSS配置项： <a
+                    href="https://help.aliyun.com/document_detail/64097.html">https://help.aliyun.com/document_detail/64097.html</a>
+            </p>
+        </el-alert>
+        <el-alert type="warning" effect="dark" :closable="false">
+            <el-divider content-position="left">第一步：启用 extensionAllowedProposedApi</el-divider>
+            <el-button size="medium" style="margin-left:150px;" @click="dialogVisible=true">查看操作</el-button>
+            &nbsp;[特别注意：目前如果VSCode版本更新后，需要重新操作一下～]
+            <el-divider content-position="left">第二步：配置 OSS </el-divider>
+            <el-form ref="form" :model="form" label-width="150px" size="medium" style="margin-top:20px;">
+                <el-form-item label="region" prop="region" :rules="{required:true}">
+                    <el-select class="w400" v-model="form.region" placeholder="请选择">
+                        <el-option v-for="item in ossRegionList" :key="item" :label="item" :value="item">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="accessKeyId" prop="accessKeyId" :rules="{required:true}">
+                    <el-input class="w400" placeholder="请输入accessKeyId" v-model.trim="form.accessKeyId" clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="accessKeySecret" prop="accessKeySecret" :rules="{required:true}">
+                    <el-input class="w400" placeholder="请输入accessKeySecret" v-model.trim="form.accessKeySecret"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="bucket" prop="bucket" :rules="{required:true}">
+                    <el-input class="w400" placeholder="请输入bucket" v-model.trim="form.bucket" clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button size="medium" type="primary" @click="updateConfig()">保存设置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-alert>
+        <el-dialog title='操作提示' :visible.sync='dialogVisible' top="5vh" width='90%'>
+            <p>
+                <el-link :underline="false" type="danger">报错的情况：</el-link>
+            </p>
+            <div>
+                <img style="width:100%" src="./image/step-3.png" alt="">
+            </div>
+            <p>第一步：找到 /Applications/Visual\ Studio\
+                Code.app/Contents/Resources/app/product.json
+                文件，然后在
+                "extensionAllowedProposedApi" 里加上 "kummy.vscode-ali-oss" 就可以了！</p>
+            <p>如图所示：</p>
+            <div>
+                <img style="width:100%" src="./image/step-2.png" alt="">
+            </div>
+        </el-dialog>
+    </div>
+</body>
+
+<script src="./config/command.js"></script>
+<script src="./resources/vue.min.js"></script>
+<script src="./resources/element.min.js"></script>
+<script src="./webview-setting.js"></script>
+
+</html>
