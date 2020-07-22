@@ -17,7 +17,7 @@
         <el-alert type="warning" effect="dark" :closable="false">
             <el-divider content-position="left">第一步：启用 extensionAllowedProposedApi</el-divider>
             <el-button size="medium" style="margin-left:150px;" @click="dialogVisible=true">查看操作</el-button>
-            &nbsp;[特别注意：目前如果VSCode版本更新后，需要重新操作一下～]
+            &nbsp;<el-link :underline="false" type="danger">[特别注意：操作完，记得重启下VSCode～]</el-link>
             <el-divider content-position="left">第二步：配置 OSS </el-divider>
             <el-form ref="form" :model="form" label-width="150px" size="medium" style="margin-top:20px;">
                 <el-form-item label="region" prop="region" :rules="{required:true}">
