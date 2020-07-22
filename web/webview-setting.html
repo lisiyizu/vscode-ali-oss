@@ -16,7 +16,8 @@
         </el-alert>
         <el-alert type="warning" effect="dark" :closable="false">
             <el-divider content-position="left">第一步：启用 extensionAllowedProposedApi</el-divider>
-            <el-button size="medium" style="margin-left:150px;" @click="dialogVisible=true">查看操作</el-button>
+            <el-button size="medium" style="margin-left:150px;" @click="showDialog('mac')">[mac系统]查看操作</el-button>
+            <el-button size="medium" style="margin-left:10px;" @click="showDialog('win')">[win系统]查看操作</el-button>
             &nbsp;<el-link :underline="false" type="danger">[特别注意：操作完，记得重启下VSCode～]</el-link>
             <el-divider content-position="left">第二步：配置 OSS </el-divider>
             <el-form ref="form" :model="form" label-width="150px" size="medium" style="margin-top:20px;">
@@ -45,19 +46,36 @@
             </el-form>
         </el-alert>
         <el-dialog title='操作提示' :visible.sync='dialogVisible' top="5vh" width='90%'>
-            <p>
-                <el-link :underline="false" type="danger">报错的情况：</el-link>
-            </p>
-            <div>
-                <img style="width:100%" src="./image/step-3.png" alt="">
+            <div v-if="systemType==='mac'">
+                <p>
+                    <el-link :underline="false" type="danger">【mac系统】报错的情况：</el-link>
+                </p>
+                <div>
+                    <img style="width:100%" src="./image/step-3.png" alt="">
+                </div>
+                <p>第一步：找到 /Applications/Visual\ Studio\
+                    Code.app/Contents/Resources/app/product.json
+                    文件，然后在
+                    "extensionAllowedProposedApi" 里加上 "kummy.vscode-ali-oss" 就可以了！</p>
+                <p>如图所示：</p>
+                <div>
+                    <img style="width:100%" src="./image/step-2.png" alt="">
+                </div>
             </div>
-            <p>第一步：找到 /Applications/Visual\ Studio\
-                Code.app/Contents/Resources/app/product.json
-                文件，然后在
-                "extensionAllowedProposedApi" 里加上 "kummy.vscode-ali-oss" 就可以了！</p>
-            <p>如图所示：</p>
-            <div>
-                <img style="width:100%" src="./image/step-2.png" alt="">
+            <div v-else-if="systemType==='win'">
+                <p>
+                    <el-link :underline="false" type="danger">【win系统】报错的情况：</el-link>
+                </p>
+                <div>
+                    <img style="width:100%" src="./image/step-4.png" alt="">
+                </div>
+                <p>第一步：找到 C:\Users\86186（这个目录有可能不同）\AppData\Local\Programs\Microsoft VS Code\resources\app\product.json
+                    文件，然后在
+                    "extensionAllowedProposedApi" 里加上 "kummy.vscode-ali-oss" 就可以了！</p>
+                <p>如图所示：</p>
+                <div>
+                    <img style="width:100%" src="./image/step-5.png" alt="">
+                </div>
             </div>
         </el-dialog>
     </div>

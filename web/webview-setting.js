@@ -4,6 +4,7 @@ new Vue({
         return {
             loading: false,
             dialogVisible: false,
+            systemType: '',
             form: {
                 region: 'oss-cn-beijing',
                 accessKeyId: '',
@@ -66,6 +67,10 @@ new Vue({
                     VSCode.postMessage({ type: WEB_COMMAND.UPDATE_OSS_CONFIG, data: this.form });
                 }
             });
+        },
+        showDialog (type) {
+            this.systemType = type;
+            this.dialogVisible = true;
         }
     }
 });

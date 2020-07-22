@@ -3,7 +3,7 @@
 	"displayName": "vscode-ali-oss",
 	"icon": "media/vscode-ali-oss.png",
 	"description": "阿里云OSS高效工具",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"publisher": "kummy",
 	"engines": {
 		"vscode": "^1.39.0"
