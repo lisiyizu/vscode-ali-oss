@@ -6,25 +6,37 @@
 
 ## 版本发布
 
+### 1.0.5
+
+##### BugFix
+
+1: 修改文档细节
+
 ### 1.0.4
 
-#### Feature
+##### Feature
 
 1: 支持导出OSS目录数据
 
-#### BugFix
+##### BugFix
 
 1: 修复上传OSS目录格式的bug
 
 ### 1.0.3
 
+##### Feature
+
 1:  oss 配置页面修改
 
 ### 1.0.2
 
+##### Feature
+
 1: oss 文件大小的信息
 
 ### 1.0.0
+
+##### Feature
 
 1: oss 配置
 

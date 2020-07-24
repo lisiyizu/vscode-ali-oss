@@ -2,33 +2,41 @@
 
 <image src="https://pic2.zhimg.com/v2-69f9e1f6629fb4728486074742612185_b.gif"></image>
 
+<image src="https://pic1.zhimg.com/v2-474456316e401df5c0bc17cc8b8346d4_b.gif"></image>
+
 ## 版本发布
+
+### 1.0.5
+
+##### BugFix
+
+1: 修改文档细节
 
 ### 1.0.4
 
-#### Feature
+##### Feature
 
-1: 支持导出OSS数据
+1: 支持导出OSS目录数据
 
-#### BugFix
+##### BugFix
 
 1: 修复上传OSS目录格式的bug
 
 ### 1.0.3
 
-#### BugFix
+##### Feature
 
 1:  oss 配置页面修改
 
 ### 1.0.2
 
-#### Feature
+##### Feature
 
 1: oss 文件大小的信息
 
 ### 1.0.0
 
-#### Feature
+##### Feature
 
 1: oss 配置
 
