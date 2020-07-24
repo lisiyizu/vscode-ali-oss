@@ -109,13 +109,17 @@ new Vue({
         },
         startUpload () {
             if (this.ossPath) {
-                this.loading = true;
-                this.loadingText = `正在上传[${this.checkList.length}/0]···`;
-                this.tableList.forEach(item => { item.uploadStatus = -1; item.uploadMsg = '等待上传' });
-                if (this.uploadWay === 0) {
-                    VSCode.postMessage({ type: WEB_COMMAND.CHOOSE_UPLOAD_FILES, data: { ...this.data, checkFiles: this.checkList } });
-                } else if (this.uploadWay === 1) {
-                    VSCode.postMessage({ type: WEB_COMMAND.CHOOSE_UPLOAD_FILES_TINYPNG, data: { ...this.data, checkFiles: this.checkList } });
+                if (/.*\/$/.test(this.ossPath)) {
+                    this.loading = true;
+                    this.loadingText = `正在上传[${this.checkList.length}/0]···`;
+                    this.tableList.forEach(item => { item.uploadStatus = -1; item.uploadMsg = '等待上传' });
+                    if (this.uploadWay === 0) {
+                        VSCode.postMessage({ type: WEB_COMMAND.CHOOSE_UPLOAD_FILES, data: { ...this.data, checkFiles: this.checkList } });
+                    } else if (this.uploadWay === 1) {
+                        VSCode.postMessage({ type: WEB_COMMAND.CHOOSE_UPLOAD_FILES_TINYPNG, data: { ...this.data, checkFiles: this.checkList } });
+                    }
+                } else {
+                    this.$message({ type: 'warning', message: '请确认以反斜杠(/)结尾!' });
                 }
             } else {
                 this.$message({ type: 'warning', message: '请您先输入OSS上传目录！' })

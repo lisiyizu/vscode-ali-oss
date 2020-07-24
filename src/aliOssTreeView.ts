@@ -4,7 +4,7 @@ import { UploadWebview } from './webview/UploadWebview';
 import { SettingWebview } from './webview/SettingWebview';
 import { BaseWebView } from './webview/BaseWebView';
 import { AliOssConfiguration } from './common/AliOssConfiguration';
-import { getProgress, isSupportTinyPng, readFileList, getSizeString } from './common/Utils';
+import { getProgress, isSupportTinyPng, readFileList, getSizeString, writeActiveText } from './common/Utils';
 import * as fs from 'fs';
 import { TinyPng } from './service/TinyPng';
 type State = 'uninitialized' | 'initialized';
@@ -189,9 +189,10 @@ export class AliOssTreeView {
 		});
 		// vscode.open：打开OSS文件
 		vscode.commands.registerCommand("alioss.openOssFileLink", async (item: any) => {
+			const configuration = AliOssConfiguration.geConfig();
 			vscode.commands.executeCommand(
 				"vscode.open",
-				vscode.Uri.parse(`https://dy-static-h5.oss-cn-beijing.aliyuncs.com/${item.dir}`)
+				vscode.Uri.parse(`https://${configuration.bucket}.${configuration.region}.aliyuncs.com/${item.dir}`)
 			);
 		});
 		// 复制OSS目录
@@ -220,8 +221,25 @@ export class AliOssTreeView {
 					await AliOss.putBuffer(`${createDirFull}${createDirCur}`, Buffer.from(''));
 					emitter.fire(item);
 				} else {
-					vscode.window.showInformationMessage('OSS目录格式有误，示例：demo', { modal: true });
+					vscode.window.showErrorMessage('OSS目录格式有误，示例：demo', { modal: true });
 				}
+			}
+		});
+		// 导出OSS数据
+		vscode.commands.registerCommand("alioss.exportOssData", async (item?: any) => {
+			const configuration = AliOssConfiguration.geConfig();
+			const inputDir: string | undefined = await vscode.window.showInputBox({
+				ignoreFocusOut: true,
+				value: `https://${configuration.bucket}.${configuration.region}.aliyuncs.com`,
+				prompt: `可以修改成私有域名，也可以不修改！`,
+				placeHolder: "请输入域名",
+			});
+			if (inputDir) {
+				const res = await AliOss.getOssDir(item.dir || '');
+				let filesArr = Object.keys(res.data).map((key: string) => `${inputDir}/${item.dir}${key}`).filter(key => (key.slice(-1) !== '/'));
+				writeActiveText(JSON.stringify(filesArr, null, '\t'), true);
+			} else if (inputDir !== undefined) {
+				vscode.window.showErrorMessage('域名不能为空！');
 			}
 		});
 		//
@@ -290,7 +308,6 @@ function treeNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string
 					data[k] = k.indexOf('/') > -1 ? {} : data[k];
 				}
 			});
-			console.log(tree);
 			data = Object.keys(data).map((k: string) => getNode(k, `${element?.dir || ''}${k}`));
 			const dataFolders = data.filter((item: any) => item.key.indexOf('/') > -1).sort((a: any, b: any) => a.key.charCodeAt(0) - b.key.charCodeAt(0));
 			const dataFiles = data.filter((item: any) => item.key.indexOf('/') === -1).sort((a: any, b: any) => a.key.charCodeAt(0) - b.key.charCodeAt(0));

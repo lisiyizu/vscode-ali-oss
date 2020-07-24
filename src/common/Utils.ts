@@ -54,3 +54,13 @@ export function isSupportTinyPng(file: string, size: number) {
     const ext = file.substr(file.lastIndexOf('.')).toLowerCase();
     return size <= 5200000 && /\.(png|jpg)$/.test(ext);
 }
+
+export function writeActiveText(str: string, isClipBoard: Boolean) {
+    const editor = vscode.window.activeTextEditor;
+    if (editor) {
+        editor.edit(builder => builder.replace(editor.selection, str));
+    } else if (isClipBoard) {
+        vscode.env.clipboard.writeText(str);
+        vscode.window.showInformationMessage('已经成功复制到剪切板！');
+    }
+}

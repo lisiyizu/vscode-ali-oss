@@ -3,7 +3,7 @@
 	"displayName": "vscode-ali-oss",
 	"icon": "media/vscode-ali-oss.png",
 	"description": "阿里云OSS高效工具",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"publisher": "kummy",
 	"engines": {
 		"vscode": "^1.39.0"
@@ -36,7 +36,7 @@
 			},
 			{
 				"command": "alioss.createOssDir",
-				"title": "新建",
+				"title": "新建目录",
 				"icon": {
 					"light": "res/media/light/folder.svg",
 					"dark": "res/media/dark/folder.svg"
@@ -48,6 +48,14 @@
 				"icon": {
 					"light": "res/media/light/upload.svg",
 					"dark": "res/media/dark/upload.svg"
+				}
+			},
+			{
+				"command": "alioss.exportOssData",
+				"title": "导出OSS数据",
+				"icon": {
+					"light": "res/media/light/json.svg",
+					"dark": "res/media/dark/json.svg"
 				}
 			},
 			{
@@ -64,7 +72,7 @@
 			},
 			{
 				"command": "alioss.copyOssFile",
-				"title": "复制",
+				"title": "复制文件",
 				"icon": {
 					"light": "res/media/light/copy.svg",
 					"dark": "res/media/dark/copy.svg"
@@ -80,7 +88,7 @@
 			},
 			{
 				"command": "alioss.copyOssFolder",
-				"title": "复制",
+				"title": "复制目录",
 				"icon": {
 					"light": "res/media/light/copy.svg",
 					"dark": "res/media/dark/copy.svg"
@@ -129,6 +137,11 @@
 				},
 				{
 					"command": "alioss.promptFile",
+					"when": "viewItem == folder",
+					"group": "inline"
+				},
+				{
+					"command": "alioss.exportOssData",
 					"when": "viewItem == folder",
 					"group": "inline"
 				},

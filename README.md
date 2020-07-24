@@ -1,6 +1,20 @@
 # vscode-ali-oss「阿里云OSS高效工具」
 
+<image src="https://pic2.zhimg.com/v2-69f9e1f6629fb4728486074742612185_b.gif"></image>
+
+<image src="https://pic1.zhimg.com/v2-474456316e401df5c0bc17cc8b8346d4_b.gif"></image>
+
 ## 版本发布
+
+### 1.0.4
+
+#### Feature
+
+1: 支持导出OSS目录数据
+
+#### BugFix
+
+1: 修复上传OSS目录格式的bug
 
 ### 1.0.3
 
@@ -28,6 +42,6 @@
 
 8: oss 图片反向压缩（选中右键，TinyPng压缩处理）
 
-9: oss 文件重命名 选中右键）
+9: oss 文件重命名 (选中右键）
 
 10: oss 文件地址/目录路径 (复制)
