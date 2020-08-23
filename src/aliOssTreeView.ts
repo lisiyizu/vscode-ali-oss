@@ -28,7 +28,7 @@ export class AliOssTreeView {
 		// Panel
 		let panelImageWebview: any = null;
 		//
-		vscode.window.createTreeView('aliOssTreeView', { treeDataProvider: treeNodeWithIdTreeDataProvider(), showCollapseAll: true });
+		const view =vscode.window.createTreeView('aliOssTreeView', { treeDataProvider: treeNodeWithIdTreeDataProvider(), showCollapseAll: true });
 		// OSS配置页面
 		vscode.commands.registerCommand('alioss.configuration', async (item: any) => {
 			let webview: BaseWebView = new SettingWebview(context);
@@ -151,7 +151,7 @@ export class AliOssTreeView {
 			});
 			const topDirs = item.dir.replace(item.key, '');
 			if (inputName) {
-				AliOss.renameFile(`${topDirs} ${inputName} `, item.dir);
+				AliOss.renameFile(`${topDirs}${inputName.trim()}`, item.dir);
 				vscode.window.showInformationMessage('修改成功!');
 				emitter.fire(null);
 			}
@@ -217,11 +217,11 @@ export class AliOssTreeView {
 			// 上传
 			if (inputDir) {
 				if (inputDir.split('/').filter(Boolean).length === 1) {
-					createDirCur = inputDir.split('/').filter(Boolean) + '/';
+					createDirCur = inputDir.trim().split('/').filter(item => item.trim()) + '/';
 					await AliOss.putBuffer(`${createDirFull}${createDirCur}`, Buffer.from(''));
 					emitter.fire(item);
 				} else {
-					vscode.window.showErrorMessage('OSS目录格式有误，示例：demo', { modal: true });
+					vscode.window.showErrorMessage('OSS目录格式有误，请以反斜杠结束。示例：demo/ 或 demo/dir/', { modal: true });
 				}
 			}
 		});

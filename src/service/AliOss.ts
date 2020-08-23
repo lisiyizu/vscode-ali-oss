@@ -3,10 +3,8 @@ import { AliOssConfiguration } from '../common/AliOssConfiguration';
 import axios from 'axios';
 import { getSizeString } from '../common/Utils';
 const OSS = require('ali-oss');
-const byteSize = require('byte-size');
 
 export class AliOss {
-    private static uploadedOssList: any[] = [];
     public static isClientConnection = false;
     // 实例化OSS配置地址：https://help.aliyun.com/document_detail/64097.html?spm=a2c4g.11186623.2.21.5ab510d51h3mk2
     public static client: any = {};
@@ -49,7 +47,8 @@ export class AliOss {
 
             let res = await this.client.list({
                 prefix: dir,
-                delimiter: '/'
+                delimiter: '/',
+                max_ret: 1000, // ⚠️注意：默认值 100，最大 1000
             });
 
             if (res.prefixes) {
